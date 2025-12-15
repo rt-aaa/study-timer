@@ -55,9 +55,14 @@ toggleBtn.onclick = () => {
     clearInterval(timerId);
 
     const sec = Math.floor((Date.now() - startTime) / 1000);
+    if (sec < 5) {
+      alert("5秒未満の記録は保存されません");
+      return;
+    }
     saveStudy(sec);
 
     timeEl.textContent = "00:00:00";
+    subjectInput.value = "";
   }
 };
 
@@ -165,6 +170,7 @@ function prevMonth() {
     currentYear--;
   }
   renderCalendar();
+  renderMonthPie();
 }
 
 function nextMonth() {
@@ -174,6 +180,7 @@ function nextMonth() {
     currentYear++;
   }
   renderCalendar();
+  renderMonthPie();
 }
 
 function getLast7Days() {
@@ -258,6 +265,59 @@ function renderWeekChart() {
   });
 }
 
+function renderMonthPie() {
+  const ctx = document.getElementById("monthPie");
+  if (!ctx) return;
+
+  const data = JSON.parse(localStorage.getItem("study") || "{}");
+
+  const monthKey = `${currentYear}-${String(currentMonth + 1).padStart(2,"0")}`;
+  const subjects = {};
+
+  // 今月分だけ集計
+  Object.keys(data).forEach(date => {
+    if (date.startsWith(monthKey)) {
+      data[date].forEach(item => {
+        if (!subjects[item.subject]) {
+          subjects[item.subject] = {
+            seconds: 0,
+            color: item.color
+          };
+        }
+        subjects[item.subject].seconds += item.seconds;
+      });
+    }
+  });
+
+  const labels = Object.keys(subjects);
+  const values = labels.map(s => (subjects[s].seconds / 3600).toFixed(2));
+  const colors = labels.map(s => subjects[s].color);
+
+  if (window.monthPieChart) {
+    window.monthPieChart.destroy();
+  }
+
+  window.monthPieChart = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors
+      }]
+    },
+    options: {
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.label}：${ctx.raw} 時間`
+          }
+        }
+      }
+    }
+  });
+}
+
 function saveStudy(sec) {
   const data = JSON.parse(localStorage.getItem("study") || "{}");
   const date = today();
@@ -283,6 +343,7 @@ function saveStudy(sec) {
 
   localStorage.setItem("study", JSON.stringify(data));
   renderToday();
+  renderMonthPie();
 }
 
 function openYouTube() {
@@ -316,9 +377,24 @@ function openYouTube() {
 
 function closeYouTube() {
   clearInterval(ytInterval);
-  document.getElementById("ytFrame").src = "";
+
+  const frame = document.getElementById("ytFrame");
+  frame.src = "about:blank";
+
   document.getElementById("ytContainer").style.display = "none";
+  document.getElementById("ytBlock").style.display = "block";
 }
+
+// 外部遷移ブロック
+document.addEventListener("click", e => {
+  if (!document.getElementById("ytContainer").style.display) return;
+
+  const a = e.target.closest("a");
+  if (!a) return;
+
+  e.preventDefault();
+  alert("YouTubeはアプリ内でのみ利用できます");
+});
 
 function blockYT() {
   document.getElementById("ytContainer").style.display = "none";
@@ -427,6 +503,7 @@ function editRecord(dateStr, index) {
 renderToday();
 renderCalendar();
 renderWeekChart();
+renderMonthPie();
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
