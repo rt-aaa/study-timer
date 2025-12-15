@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>勉強タイマー</title>
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="manifest" href="manifest.json">
+
+  <meta name="theme-color" content="#4caf50">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="StudyTimer">
+  <link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+
+<h1>勉強タイマー</h1>
+
+<div class="card">
+  <input id="subject" placeholder="勉強内容（例：数学）">
+  <input type="color" id="color" value="#36a2eb">
+  
+  <div id="time">00:00:00</div>
+
+  <button id="toggle">START</button>
+</div>
+
+<h2>YouTube</h2>
+
+<label>
+  <input type="checkbox" id="ytEnable" checked>
+  勉強時間分だけYouTubeを見る
+</label>
+
+<p id="ytRemain">残り：00:00:00</p>
+
+<div id="ytContainer" style="display:none;">
+  <iframe
+    id="ytFrame"
+    src=""
+    allow="accelerometer; autoplay; encrypted-media"
+    style="width:100%; height:60vh; border:none;">
+  </iframe>
+</div>
+
+<p id="ytBlock" style="color:red; display:none;">
+  YouTubeは利用できません
+</p>
+
+<button onclick="openYouTube()">YouTubeを見る</button>
+<button onclick="closeYouTube()">閉じる</button>
+
+<h2>今日の勉強</h2>
+<p id="todayTotal">合計：00:00:00</p>
+<ul id="todayList"></ul>
+
+<h2>カレンダー</h2>
+<p id="monthTotal">月合計：00:00:00</p>
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <button onclick="prevMonth()">◀ 前月</button>
+  <span id="monthLabel"></span>
+  <button onclick="nextMonth()">次月 ▶</button>
+</div>
+<div id="calendar"></div>
+
+<h2 id="detailTitle">詳細</h2>
+<div id="dayDetail">
+  <p>日付をタップしてください</p>
+</div>
+
+<h2>直近1週間の勉強時間</h2>
+<canvas id="weekChart"></canvas>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="script.js"></script>
+</body>
+</html>

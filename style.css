@@ -1,0 +1,108 @@
+body {
+  font-family: sans-serif;
+  background: #f5f5f5;
+  text-align: center;
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+#time {
+  font-size: 32px;
+  margin: 15px 0;
+}
+
+button {
+  font-size: 18px;
+  padding: 10px 20px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin: 6px 0;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.calendar-header {
+  font-weight: bold;
+}
+
+.day {
+  background: white;
+  border-radius: 6px;
+  padding: 6px;
+  min-height: 60px;
+  font-size: 12px;
+}
+
+.day-number {
+  font-weight: bold;
+}
+
+.study-time {
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+canvas {
+  max-width: 100%;
+  margin-top: 10px;
+}
+
+.day {
+  cursor: pointer;
+}
+
+.day:hover {
+  background: #eef;
+}
+
+#dayDetail {
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.detail-item {
+  margin: 6px 0;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-buttons button {
+  margin-left: 6px;
+}
+
+/* 今日 */
+.today {
+  border: 2px solid #ff9800;
+}
+
+/* 勉強した日 */
+.studied {
+  background: #e8f5e9;
+}
