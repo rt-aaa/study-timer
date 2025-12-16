@@ -2,11 +2,13 @@ const subjectInput = document.getElementById("subject");
 const colorInput = document.getElementById("color");
 const timeEl = document.getElementById("time");
 const toggleBtn = document.getElementById("toggle");
+const saveBtn = document.getElementById("save");
 const listEl = document.getElementById("todayList");
 const totalEl = document.getElementById("todayTotal");
 
 let running = false;
 let startTime = 0;
+let elapsedSec = 0;
 let timerId = null;
 let weekChart = null;
 let ytInterval = null;
@@ -45,7 +47,9 @@ toggleBtn.onclick = () => {
     closeYouTube();
 
     timerId = setInterval(() => {
-      const sec = Math.floor((Date.now() - startTime) / 1000);
+      const sec =
+        elapsedSec +
+        Math.floor((Date.now() - startTime) / 1000);
       timeEl.textContent = format(sec);
     }, 1000);
 
@@ -54,16 +58,24 @@ toggleBtn.onclick = () => {
     toggleBtn.textContent = "START";
     clearInterval(timerId);
 
-    const sec = Math.floor((Date.now() - startTime) / 1000);
-    if (sec < 5) {
-      alert("5秒未満の記録は保存されません");
-      return;
-    }
-    saveStudy(sec);
-
-    timeEl.textContent = "00:00:00";
-    subjectInput.value = "";
+    elapsedSec += Math.floor((Date.now() - startTime) / 1000);
+    timeEl.textContent = format(elapsedSec);
   }
+};
+
+saveBtn.onclick = () => {
+  if (elapsedSec <= 5) {
+    alert("保存する勉強時間がありません");
+    return;
+  }
+
+  saveStudy(elapsedSec);
+
+  // リセット
+  elapsedSec = 0;
+  timeEl.textContent = "00:00:00";
+
+  showToast();
 };
 
 // 今日の履歴表示
@@ -497,6 +509,16 @@ function editRecord(dateStr, index) {
   renderToday();
   renderCalendar();
   renderWeekChart();
+}
+
+function showToast(message = "保存しました") {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
 }
 
 // 起動時に表示
