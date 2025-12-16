@@ -77,6 +77,25 @@
 <h2>今月の科目別割合</h2>
 <canvas id="monthPie"></canvas>
 
+<dialog id="editDialog" style="border:none; border-radius:8px; padding:20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+  <h3 style="margin-top:0;">記録の編集</h3>
+  
+  <div style="margin-bottom:15px; text-align:left;">
+    <label style="display:block; font-size:12px; margin-bottom:4px;">勉強内容</label>
+    <input id="editSubject" type="text" style="width:100%; padding:8px; box-sizing:border-box;">
+  </div>
+
+  <div style="margin-bottom:20px; text-align:left;">
+    <label style="display:block; font-size:12px; margin-bottom:4px;">色</label>
+    <input id="editColor" type="color" style="width:100%; height:40px; cursor:pointer;">
+  </div>
+
+  <div style="text-align: right;">
+    <button id="cancelEdit" style="background:#ccc; margin-right:8px;">キャンセル</button>
+    <button id="saveEdit" style="background:#4caf50; color:white;">保存</button>
+  </div>
+</dialog>
+
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

@@ -5,6 +5,11 @@ const toggleBtn = document.getElementById("toggle");
 const saveBtn = document.getElementById("save");
 const listEl = document.getElementById("todayList");
 const totalEl = document.getElementById("todayTotal");
+const editDialog = document.getElementById("editDialog");
+const editSubjectInput = document.getElementById("editSubject");
+const editColorInput = document.getElementById("editColor");
+const saveEditBtn = document.getElementById("saveEdit");
+const cancelEditBtn = document.getElementById("cancelEdit");
 
 let running = false;
 let startTime = 0;
@@ -12,6 +17,7 @@ let elapsedSec = 0;
 let timerId = null;
 let weekChart = null;
 let ytInterval = null;
+let editingTarget = null;
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth(); // 0〜11
 
@@ -495,26 +501,47 @@ function editRecord(dateStr, index) {
   const data = JSON.parse(localStorage.getItem("study") || "{}");
   const item = data[dateStr][index];
 
-  const subject = prompt("勉強内容", item.subject);
-  if (subject === null) return;
+  // 編集対象の場所（日付とインデックス）を記憶しておく
+  editingTarget = { date: dateStr, index: index };
 
-  const timeMin = prompt("勉強時間（分）", Math.floor(item.seconds / 60));
-  if (timeMin === null) return;
+  // 現在の値をダイアログに入力済みにしておく
+  editSubjectInput.value = item.subject;
+  editColorInput.value = item.color;
 
-  const color = prompt("色（#rrggbb）", item.color);
-  if (color === null) return;
-
-  item.subject = subject;
-  item.seconds = Number(timeMin) * 60;
-  item.color = color;
-
-  localStorage.setItem("study", JSON.stringify(data));
-
-  showDayDetail(dateStr);
-  renderToday();
-  renderCalendar();
-  renderWeekChart();
+  // ダイアログを表示
+  editDialog.showModal();
 }
+
+saveEditBtn.onclick = () => {
+  if (!editingTarget) return;
+
+  const { date, index } = editingTarget;
+  const data = JSON.parse(localStorage.getItem("study") || "{}");
+
+  // データが存在すれば更新する（時間は変更しない）
+  if (data[date] && data[date][index]) {
+    data[date][index].subject = editSubjectInput.value;
+    data[date][index].color = editColorInput.value;
+
+    localStorage.setItem("study", JSON.stringify(data));
+
+    // 画面全体を再描画
+    showDayDetail(date); // 詳細表示を更新
+    renderToday();       // 今日のリスト更新
+    renderCalendar();    // カレンダー更新
+    renderWeekChart();   // グラフ更新
+    renderMonthPie();    // 円グラフ更新
+    
+    showToast("記録を修正しました");
+  }
+
+  editDialog.close();
+};
+
+// 「キャンセル」ボタンが押されたとき
+cancelEditBtn.onclick = () => {
+  editDialog.close();
+};
 
 function showToast(message = "保存しました") {
   const toast = document.getElementById("toast");
