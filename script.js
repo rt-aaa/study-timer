@@ -58,12 +58,17 @@ toggleBtn.onclick = () => {
     toggleBtn.textContent = "START";
     clearInterval(timerId);
 
-    elapsedSec += Math.floor((Date.now() - startTime) / 1000);
+    const diff = Math.floor((Date.now() - startTime) / 1000);
+    if (diff > 0) {
+      elapsedSec += diff;
+    }
     timeEl.textContent = format(elapsedSec);
   }
 };
 
 saveBtn.onclick = () => {
+  console.log("elapsedSec =", elapsedSec);
+  
   if (elapsedSec <= 5) {
     alert("保存する勉強時間がありません");
     return;
