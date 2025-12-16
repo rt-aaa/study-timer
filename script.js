@@ -68,7 +68,7 @@ toggleBtn.onclick = () => {
 
 saveBtn.onclick = () => {
   console.log("elapsedSec =", elapsedSec);
-  
+
   if (elapsedSec <= 5) {
     alert("保存する勉強時間がありません");
     return;
@@ -526,11 +526,24 @@ function showToast(message = "保存しました") {
   }, 2000);
 }
 
+function updateYTLabel() {
+  const yt = JSON.parse(localStorage.getItem("youtubeTime")) || { remaining: 0 };
+  const el = document.getElementById("ytRemain");
+  if (el) {
+    el.textContent = "残り：" + format(yt.remaining);
+  }
+}
+
+function saveYT(yt) {
+  localStorage.setItem("youtubeTime", JSON.stringify(yt));
+}
+
 // 起動時に表示
 renderToday();
 renderCalendar();
 renderWeekChart();
 renderMonthPie();
+updateYTLabel();
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
