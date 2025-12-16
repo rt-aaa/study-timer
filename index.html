@@ -77,22 +77,31 @@
 <h2>今月の科目別割合</h2>
 <canvas id="monthPie"></canvas>
 
-<dialog id="editDialog" style="border:none; border-radius:8px; padding:20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-  <h3 style="margin-top:0;">記録の編集</h3>
+<dialog id="editDialog" style="border:none; border-radius:12px; padding:24px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); width: 80%; max-width: 300px;">
+  <h3 style="margin-top:0; text-align:center;">記録の編集</h3>
   
   <div style="margin-bottom:15px; text-align:left;">
-    <label style="display:block; font-size:12px; margin-bottom:4px;">勉強内容</label>
-    <input id="editSubject" type="text" style="width:100%; padding:8px; box-sizing:border-box;">
+    <label style="display:block; font-size:12px; margin-bottom:4px; color:#666;">勉強内容</label>
+    <input id="editSubject" type="text" style="width:100%; padding:10px; box-sizing:border-box; border:1px solid #ddd; border-radius:6px; font-size:16px;">
   </div>
 
-  <div style="margin-bottom:20px; text-align:left;">
-    <label style="display:block; font-size:12px; margin-bottom:4px;">色</label>
-    <input id="editColor" type="color" style="width:100%; height:40px; cursor:pointer;">
+  <div style="margin-bottom:24px; text-align:left;">
+    <label style="display:block; font-size:12px; margin-bottom:4px; color:#666;">色</label>
+    
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <label for="editColor" style="font-size: 32px; cursor: pointer; background: #f0f0f0; border-radius: 8px; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;">
+        🎨
+      </label>
+      
+      <div id="colorPreview" style="width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ccc;"></div>
+
+      <input id="editColor" type="color" style="opacity: 0; width: 0; height: 0; position: absolute;">
+    </div>
   </div>
 
-  <div style="text-align: right;">
-    <button id="cancelEdit" style="background:#ccc; margin-right:8px;">キャンセル</button>
-    <button id="saveEdit" style="background:#4caf50; color:white;">保存</button>
+  <div style="display: flex; justify-content: space-between;">
+    <button id="cancelEdit" style="background:#ddd; color:#333; border:none; border-radius:6px; padding:10px 20px; font-size:14px;">キャンセル</button>
+    <button id="saveEdit" style="background:#4caf50; color:white; border:none; border-radius:6px; padding:10px 20px; font-size:14px;">保存</button>
   </div>
 </dialog>
 

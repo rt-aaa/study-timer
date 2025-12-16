@@ -508,6 +508,8 @@ function editRecord(dateStr, index) {
   editSubjectInput.value = item.subject;
   editColorInput.value = item.color;
 
+  document.getElementById("colorPreview").style.backgroundColor = item.color;
+
   // ダイアログを表示
   editDialog.showModal();
 }
@@ -542,6 +544,10 @@ saveEditBtn.onclick = () => {
 cancelEditBtn.onclick = () => {
   editDialog.close();
 };
+
+editColorInput.addEventListener("input", (e) => {
+  document.getElementById("colorPreview").style.backgroundColor = e.target.value;
+});
 
 function showToast(message = "保存しました") {
   const toast = document.getElementById("toast");
