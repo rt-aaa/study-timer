@@ -235,7 +235,7 @@ function renderWeekChart() {
     }
   });
 
-  const labels = days.map(d => d.slice(5)); // MM-DD
+  const labels = days.map(d => d.slice(5).replace("-", "/"));
 
   // datasets 作成
   const datasets = Object.keys(subjects).map(subject => {
@@ -250,7 +250,7 @@ function renderWeekChart() {
           }
         });
       }
-      values.push((total / 60).toFixed(2));
+      values.push(Math.round(total / 60));
     });
 
     return {
@@ -280,7 +280,14 @@ function renderWeekChart() {
           beginAtZero: true,
           title: {
             display: true,
-            text: "勉強時間（時間）"
+            text: "勉強時間（分）"
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.dataset.label}：${ctx.raw} 分`
           }
         }
       }
@@ -313,7 +320,7 @@ function renderMonthPie() {
   });
 
   const labels = Object.keys(subjects);
-  const values = labels.map(s => subjects[s].seconds / 3600);
+  const values = labels.map(s => subjects[s].seconds / 60);
   const colors = labels.map(s => subjects[s].color);
 
   if (window.monthPieChart) {
@@ -333,7 +340,7 @@ function renderMonthPie() {
       plugins: {
         tooltip: {
           callbacks: {
-            label: (ctx) => `${ctx.label}：${ctx.raw} 時間`
+            label: (ctx) => `${ctx.label}：${Math.round(ctx.raw)} 分`
           }
         }
       }
