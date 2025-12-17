@@ -374,6 +374,10 @@ function saveStudy(sec) {
   localStorage.setItem("study", JSON.stringify(data));
   renderToday();
   renderMonthPie();
+  renderCalendar();
+  renderWeekChart();
+
+  showDayDetail(date);
 }
 
 function startYouTube() {
