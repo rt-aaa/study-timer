@@ -51,8 +51,6 @@ toggleBtn.onclick = () => {
     running = true;
     toggleBtn.textContent = "STOP";
     startTime = Date.now();
-    
-    closeYouTube();
 
     timerId = setInterval(() => {
       const sec =
@@ -385,6 +383,10 @@ function startYouTube() {
     return;
   }
 
+  if (Notification.permission === "default") {
+    Notification.requestPermission();
+  }
+
   // 視聴開始の記録
   ytStartTime = Date.now();
   initialRemain = yt.remaining;
@@ -416,8 +418,15 @@ function checkYouTubeTime() {
   // 時間切れチェック
   if (currentRemain <= 0) {
     stopYouTube(); // タイマー停止＆保存
-    alert("YouTubeの時間が終了しました！");
-    // ※注意：セキュリティ上、ここからYouTubeのタブを閉じることはできません
+    if (Notification.permission === "granted") {
+      new Notification("時間終了", {
+        body: "YouTubeの時間が終わりました。アプリに戻って記録してください。",
+        icon: "icon-192.png" // アイコンがある場合
+      });
+    } else {
+      // 通知が許可されていない場合は従来どおりアラート（戻ったときに表示される）
+      alert("YouTubeの時間が終了しました");
+    }
   }
 }
 
