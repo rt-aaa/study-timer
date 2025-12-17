@@ -541,6 +541,7 @@ function deleteRecord(dateStr, index) {
   renderToday();
   renderCalendar();
   renderWeekChart();
+  renderMonthPie();
 }
 
 function editRecord(dateStr, index) {
