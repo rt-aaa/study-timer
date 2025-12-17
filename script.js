@@ -609,6 +609,8 @@ function checkYTDate() {
     date: todayStr() 
   };
 
+  yt.enabled = true;
+
   // 保存されている日付と今日の日付が違う場合（＝日付が変わった、または初めての実行）
   if (yt.date !== todayStr()) {
     yt.remaining = 0;      // 時間をリセット
@@ -635,3 +637,27 @@ checkYTDate();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
+
+// アプリが手前に戻ってきたとき（アクティブになったとき）に自動更新する
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    
+    // 1. YouTubeの持ち越し時間をチェック（日付が変わっていたらリセット）
+    checkYTDate();
+
+    // 2. カレンダーの表示月を「今」に合わせ直す
+    // （これをしないと月が変わったときに古い月のままになります）
+    currentYear = new Date().getFullYear();
+    currentMonth = new Date().getMonth();
+
+    // 3. 画面全体を再描画して、今日の正しい日付・データを表示する
+    renderToday();
+    renderCalendar();
+    renderWeekChart();
+    renderMonthPie();
+    updateYTLabel();
+
+    // 4. 詳細欄も「今日」のものに更新する
+    showDayDetail(today());
+  }
+});
