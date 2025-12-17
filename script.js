@@ -360,11 +360,8 @@ function saveStudy(sec) {
     seconds: sec
   });
 
-  // YouTube時間加算
-  const yt = JSON.parse(localStorage.getItem("youtubeTime")) || {
-    remaining: 0,
-    enabled: true
-  };
+  let yt = checkYTDate();
+
   if (yt.enabled) {
     yt.remaining += sec;
     localStorage.setItem("youtubeTime", JSON.stringify(yt));
@@ -381,7 +378,7 @@ function saveStudy(sec) {
 }
 
 function startYouTube() {
-  const yt = JSON.parse(localStorage.getItem("youtubeTime") || "{}");
+  const yt = checkYTDate();
   
   // 残り時間がない、または機能が無効の場合
   if (!yt.enabled || (yt.remaining || 0) <= 0) {
@@ -603,6 +600,26 @@ function updateYTLabel() {
   }
 }
 
+// 日付が変わっていたらYouTube時間をリセットする関数
+function checkYTDate() {
+  // 現在の設定を取得（なければデフォルト作成）
+  let yt = JSON.parse(localStorage.getItem("youtubeTime")) || { 
+    remaining: 0, 
+    enabled: true, 
+    date: todayStr() 
+  };
+
+  // 保存されている日付と今日の日付が違う場合（＝日付が変わった、または初めての実行）
+  if (yt.date !== todayStr()) {
+    yt.remaining = 0;      // 時間をリセット
+    yt.date = todayStr();  // 日付を今日に更新
+    localStorage.setItem("youtubeTime", JSON.stringify(yt));
+    updateYTLabel();       // 表示も更新
+  }
+  
+  return yt; // 最新の状態を返す
+}
+
 function saveYT(yt) {
   localStorage.setItem("youtubeTime", JSON.stringify(yt));
 }
@@ -613,6 +630,7 @@ renderCalendar();
 renderWeekChart();
 renderMonthPie();
 updateYTLabel();
+checkYTDate();
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
