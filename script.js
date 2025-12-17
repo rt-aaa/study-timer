@@ -31,13 +31,16 @@ function format(sec) {
   return `${h}:${m}:${s}`;
 }
 
-// 今日の日付（YYYY-MM-DD）
 function today() {
-  return new Date().toISOString().slice(0, 10);
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function todayStr() {
-  return new Date().toISOString().slice(0, 10);
+  return today(); // today()と同じ処理なので呼び出すだけでOK
 }
 
 // START / STOP
