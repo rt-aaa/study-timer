@@ -73,8 +73,6 @@ toggleBtn.onclick = () => {
 };
 
 saveBtn.onclick = () => {
-  console.log("elapsedSec =", elapsedSec);
-
   if (elapsedSec <= 5) {
     alert("保存する勉強時間がありません");
     return;
@@ -85,6 +83,8 @@ saveBtn.onclick = () => {
   // リセット
   elapsedSec = 0;
   timeEl.textContent = "00:00:00";
+  subjectInput.value = "";
+  colorInput.value = "#36a2eb";
 
   showToast();
 };
@@ -458,17 +458,6 @@ function stopYouTube() {
   
   updateYTLabel();
 }
-
-// 外部遷移ブロック
-document.addEventListener("click", e => {
-  if (!document.getElementById("ytContainer").style.display) return;
-
-  const a = e.target.closest("a");
-  if (!a) return;
-
-  e.preventDefault();
-  alert("YouTubeはアプリ内でのみ利用できます");
-});
 
 function showDayDetail(dateStr) {
   const detail = document.getElementById("dayDetail");
