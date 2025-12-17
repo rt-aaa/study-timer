@@ -37,14 +37,12 @@
 
 <p id="ytRemain">残り：00:00:00</p>
 
-<div id="ytContainer" style="display:none;">
-  <iframe
-    id="ytFrame"
-    src=""
-    sandbox="allow-scripts allow-same-origin"
-    style="width:100%; height:60vh; border:none;">
-  </iframe>
+<div id="watchingStatus" style="display:none; background:#ffebee; padding:15px; border-radius:10px; margin-bottom:15px;">
+  <p style="color:#d32f2f; font-weight:bold;">視聴中（別タブで開いています）</p>
+  <button onclick="stopYouTube()" style="background:#d32f2f; color:white;">視聴を終了して時間を確定</button>
 </div>
+
+<button id="openYtBtn" onclick="startYouTube()">YouTubeを開く</button>
 
 <p id="ytBlock" style="color:red; display:none;">
   YouTubeは利用できません

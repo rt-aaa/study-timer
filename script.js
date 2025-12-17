@@ -17,6 +17,8 @@ let elapsedSec = 0;
 let timerId = null;
 let weekChart = null;
 let ytInterval = null;
+let ytStartTime = 0; // 視聴開始時刻
+let initialRemain = 0; // 視聴開始時の持ち時間
 let editingTarget = null;
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth(); // 0〜11
@@ -313,7 +315,7 @@ function renderMonthPie() {
   });
 
   const labels = Object.keys(subjects);
-  const values = labels.map(s => (subjects[s].seconds / 3600).toFixed(2));
+  const values = labels.map(s => subjects[s].seconds / 3600);
   const colors = labels.map(s => subjects[s].color);
 
   if (window.monthPieChart) {
@@ -369,11 +371,12 @@ function saveStudy(sec) {
   renderMonthPie();
 }
 
-function openYouTube() {
-  const yt = JSON.parse(localStorage.getItem("youtubeTime"));
-
-  if (!yt.enabled || yt.remaining <= 0) {
-    blockYT();
+function startYouTube() {
+  const yt = JSON.parse(localStorage.getItem("youtubeTime") || "{}");
+  
+  // 残り時間がない、または機能が無効の場合
+  if (!yt.enabled || (yt.remaining || 0) <= 0) {
+    alert("YouTubeを見るための持ち時間がありません");
     return;
   }
 
@@ -382,30 +385,58 @@ function openYouTube() {
     return;
   }
 
-  document.getElementById("ytBlock").style.display = "none";
-  document.getElementById("ytContainer").style.display = "block";
-  document.getElementById("ytFrame").src = "https://www.youtube.com";
+  // 視聴開始の記録
+  ytStartTime = Date.now();
+  initialRemain = yt.remaining;
 
-  ytInterval = setInterval(() => {
-    yt.remaining--;
-    saveYT(yt);
-    updateYTLabel();
+  // 画面の表示切替
+  document.getElementById("openYtBtn").style.display = "none";
+  document.getElementById("watchingStatus").style.display = "block";
 
-    if (yt.remaining <= 0) {
-      closeYouTube();
-      alert("YouTubeの時間が終了しました");
-    }
-  }, 1000);
+  // 別タブでYouTubeを開く
+  window.open("https://www.youtube.com", "_blank");
+
+  // タイマー開始（1秒ごとにチェック）
+  if (ytInterval) clearInterval(ytInterval);
+  ytInterval = setInterval(checkYouTubeTime, 1000);
 }
 
-function closeYouTube() {
+function checkYouTubeTime() {
+  // 現在の経過時間を計算
+  const now = Date.now();
+  const elapsed = Math.floor((now - ytStartTime) / 1000);
+  
+  // 残り時間を計算
+  let currentRemain = initialRemain - elapsed;
+
+  // 画面表示更新
+  const el = document.getElementById("ytRemain");
+  if (el) el.textContent = "残り：" + format(currentRemain < 0 ? 0 : currentRemain);
+
+  // 時間切れチェック
+  if (currentRemain <= 0) {
+    stopYouTube(); // タイマー停止＆保存
+    alert("YouTubeの時間が終了しました！");
+    // ※注意：セキュリティ上、ここからYouTubeのタブを閉じることはできません
+  }
+}
+
+function stopYouTube() {
   clearInterval(ytInterval);
 
-  const frame = document.getElementById("ytFrame");
-  frame.src = "about:blank";
+  // 最終的な経過時間を計算して保存
+  const now = Date.now();
+  const elapsed = Math.floor((now - ytStartTime) / 1000);
+  
+  const yt = JSON.parse(localStorage.getItem("youtubeTime") || "{}");
+  yt.remaining = Math.max(0, yt.remaining - elapsed); // マイナスにならないように
+  saveYT(yt);
 
-  document.getElementById("ytContainer").style.display = "none";
-  document.getElementById("ytBlock").style.display = "block";
+  // 画面を元に戻す
+  document.getElementById("watchingStatus").style.display = "none";
+  document.getElementById("openYtBtn").style.display = "inline-block";
+  
+  updateYTLabel();
 }
 
 // 外部遷移ブロック
@@ -418,11 +449,6 @@ document.addEventListener("click", e => {
   e.preventDefault();
   alert("YouTubeはアプリ内でのみ利用できます");
 });
-
-function blockYT() {
-  document.getElementById("ytContainer").style.display = "none";
-  document.getElementById("ytBlock").style.display = "block";
-}
 
 function showDayDetail(dateStr) {
   const detail = document.getElementById("dayDetail");
